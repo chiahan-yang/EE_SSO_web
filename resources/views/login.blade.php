@@ -45,7 +45,7 @@
           <!-- /.col -->
           <div class="login_error">
           <!-- 錯誤訊息模板元件 -->
-          @include('layout.ValidatorError') <!--資料夾.網頁名稱-->
+          @include('layouts.ValidatorError') <!--資料夾.網頁名稱-->
           </div>
           <div class="col-12">
             <button type="submit" class="btn btn-primary btn-block">登入</button>

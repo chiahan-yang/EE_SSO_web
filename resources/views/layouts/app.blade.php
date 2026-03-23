@@ -45,29 +45,30 @@
 
     <div class="sidebar">
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/home" class="nav-link">
-              <i class="nav-icon fas fa-home"></i>
-              <p>首頁概覽</p>
-            </a>
-          </li>
-          
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-calendar-alt"></i>
-              <p>教室預約</p>
-            </a>
-          </li>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+    
+    <li class="nav-item">
+        <a href="/home" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>首頁概覽</p>
+        </a>
+    </li>
 
-           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-cogs"></i>
-              <p>系統管理</p>
-            </a>
-          </li>
+    <li class="nav-item">
+        <a href="/profile" class="nav-link">
+            <i class="nav-icon fas fa-id-card"></i>
+            <p>個人資訊 / SSO 資訊</p>
+        </a>
+    </li>
 
-        </ul>
+    <li class="nav-item">
+        <a href="/users" class="nav-link">
+            <i class="nav-icon fas fa-users-cog"></i>
+            <p>帳號管理</p>
+        </a>
+    </li>
+
+</ul>
       </nav>
     </div>
   </aside>

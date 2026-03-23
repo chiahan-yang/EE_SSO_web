@@ -46,14 +46,32 @@ class CustomLoginController extends Controller
             $authlogin = $client->authUser2($username, $password, "ENC", "1;2");
 
             if ($authlogin) {
-                $isSsoSuccess = true;
-                // 驗證成功，撈取詳細資料 (參數依據舊程式碼)
-                $infoStr = $client->getAttr2($username, $password, "ENC", "1;2", "EMPNO;NAME;IDNO;PKIND;GRPNO;UNICOD1;DPT_DESC1;UNICOD2;DPT_DESC2;LEAVE;TITCOD;TITLE;EMAIL;POFTEL");
-                
-                // 解析回傳的字串 (分號分隔)
-                $ssoData = explode(";", $infoStr);
-                // 根據你的舊 Code: $ssoData[0] 是 ID, $ssoData[1] 是 姓名...
-            }
+                    $isSsoSuccess = true;
+                    // 取得詳細資料
+                    $infoStr = $client->getAttr2($username, $password, "ENC", "1;2", "EMPNO;NAME;IDNO;PKIND;GRPNO;UNICOD1;DPT_DESC1;UNICOD2;DPT_DESC2;LEAVE;TITCOD;TITLE;EMAIL;POFTEL");
+                    
+                    $ssoData = explode(";", $infoStr);
+
+                    // 【新增這段】將資料映射成易讀的陣列，並存入 Session
+                    $ssoMap = [
+                        '員工編號 (EMPNO)' => $ssoData[0] ?? '',
+                        '姓名 (NAME)' => $ssoData[1] ?? '',
+                        '身分證號 (IDNO)' => $ssoData[2] ?? '', // 注意資安，此欄位通常不顯示
+                        '人員類別 (PKIND)' => $ssoData[3] ?? '',
+                        '群組代碼 (GRPNO)' => $ssoData[4] ?? '',
+                        '單位代碼1 (UNICOD1)' => $ssoData[5] ?? '',
+                        '單位名稱1 (DPT_DESC1)' => $ssoData[6] ?? '',
+                        '單位代碼2 (UNICOD2)' => $ssoData[7] ?? '',
+                        '單位名稱2 (DPT_DESC2)' => $ssoData[8] ?? '',
+                        '離職註記 (LEAVE)' => $ssoData[9] ?? '',
+                        '職稱代碼 (TITCOD)' => $ssoData[10] ?? '',
+                        '職稱名稱 (TITLE)' => $ssoData[11] ?? '',
+                        'Email (EMAIL)' => $ssoData[12] ?? '',
+                        '辦公室電話 (POFTEL)' => $ssoData[13] ?? '',
+                    ];
+                    // 存入 Session，讓個人資訊頁面可以讀取
+                    session(['sso_info' => $ssoMap]);
+                }
 
         } catch (\Exception $e) {
             // 如果學校主機連不上，這裡會捕捉錯誤，但不中斷，繼續往下嘗試本地登入
