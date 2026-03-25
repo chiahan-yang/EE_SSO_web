@@ -1,5 +1,5 @@
 <?php
-
+// 1150324 還原可登入版本
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
