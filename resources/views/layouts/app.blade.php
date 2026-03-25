@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>電機系教室預約系統</title>
+  <title>電機系行政系統</title>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -40,7 +40,7 @@
 
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="/home" class="brand-link">
-      <span class="brand-text font-weight-light">教室預約系統</span>
+      <span class="brand-text font-weight-light">電機系行政系統</span>
     </a>
 
     <div class="sidebar">

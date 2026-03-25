@@ -23,9 +23,9 @@
               <div class="card-body">
                 <h6 class="card-title">你好，{{ Auth::user()->name }}！</h6>
                 <p class="card-text">
-                  您已成功登入系統。這裡可以放一些公告事項或是今日課表概覽。
+                  您已成功登入系統。
                 </p>
-                <a href="#" class="btn btn-primary">查看預約狀況</a>
+                <a href="#" class="btn btn-primary">查看</a>
               </div>
             </div>
           </div>
