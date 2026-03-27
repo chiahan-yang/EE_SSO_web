@@ -18,11 +18,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'account',    // 新增
-        'user_type',  // 新增
-        'email',
-        'password',
+        'name', 'account', 'user_type', 'email', 'password',
+        'pkind', 'grpno', 'unicode1', 'dpt_desc1', 'unicode2', 
+        'titcod', 'title', 'idno', 'leave' 
     ];
 
     // --- 這裡是最重要的修正，防止跳轉閃退 ---

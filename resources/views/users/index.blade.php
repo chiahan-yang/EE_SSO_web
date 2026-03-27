@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .table-responsive-custom {
+        max-height: 600px; /* 設定上下滾動的最大高度，可依需求調整 */
+        overflow: auto;
+    }
+    /* 讓表頭在上下滾動時固定在頂部 */
+    .table-responsive-custom thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f4f6f9;
+        z-index: 1;
+    }
+</style>
+
 <div class="content-header">
     <div class="container-fluid">
         <h1>
@@ -22,17 +36,19 @@
         @endif
 
         <div class="card">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped">
+            <div class="card-body p-0 table-responsive-custom">
+                <table class="table table-hover table-striped text-nowrap">
                     <thead class="thead-light">
                         <tr>
-                            <th>類型</th>
+                            <th>帳號類型</th>
                             <th>登入帳號</th>
                             <th>姓名</th>
-                            <th>Email</th>
+                            <th>身分證號</th> <th>群組</th>
+                            <th>單位(單位代碼)</th>
+                            <th>職稱(職稱代碼)</th> <th>在職/學註記</th> <th>Email</th>
                             <th>建立時間</th>
-                            <th>最後更新</th>
-                            <th style="width: 100px;">動作</th>
+                            <th>更新時間</th>
+                            <th style="width: 150px;">動作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,36 +56,72 @@
                         <tr>
                             <td>
                                 @if($user->user_type === 'sso')
-                                    <span class="badge badge-info">SSO 會員</span>
+                                    <span class="badge badge-info">SSO ({{ $user->pkind ?? '-' }})</span>
                                 @else
-                                    <span class="badge badge-secondary">本地帳號</span>
+                                    <span class="badge badge-secondary">本地</span>
                                 @endif
                             </td>
                             
                             <td><strong>{{ $user->account }}</strong></td>
                             
                             <td>{{ $user->name }}</td>
+
+                            <td>{{ $user->idno ?? '-' }}</td>
+
+                            <td>{{ $user->grpno ?? '-' }}</td>
+
+                            <td>
+                                {{ $user->dpt_desc1 ?? '-' }} 
+                                @if($user->unicode1)
+                                    <small class="text-muted">({{ $user->unicode1 }})</small>
+                                @endif
+                            </td>
+
+                            <td>
+                                {{ $user->title ?? '-' }}
+                                @if($user->titcod)
+                                    <small class="text-muted">({{ $user->titcod }})</small>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if($user->leave == '0')
+                                    <span class="text-success">在職/在學</span>
+                                @elseif($user->leave == '1')
+                                    <span class="text-danger">離職/畢掉業</span>
+                                @else
+                                    {{ $user->leave ?? '-' }}
+                                @endif
+                            </td>
                             
                             <td>{{ $user->email ?? '-' }}</td>
                             
                             <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
+
                             <td>{{ $user->updated_at->format('Y-m-d H:i') }}</td>
 
                             <td>
-                                @if(auth()->user()->account === $user->account)
-                                    <button class="btn btn-default btn-sm" disabled title="無法刪除自己">
-                                        <i class="fas fa-user-lock"></i> 本人
-                                    </button>
-                                @else
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" 
-                                        onsubmit="return confirm('確定要永久刪除此帳號（{{ $user->name }}）嗎？');">
-                                        @csrf 
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> 刪除
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-info btn-sm" title="編輯資料">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    @if(auth()->user()->account === $user->account)
+                                        <button class="btn btn-default btn-sm" disabled title="無法刪除自己">
+                                            <i class="fas fa-user-lock"></i>
                                         </button>
-                                    </form>
-                                @endif
+                                    @else
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" 
+                                            onsubmit="return confirm('確定要永久刪除此帳號（{{ $user->name }}）嗎？');" 
+                                            style="display:inline;">
+                                            @csrf 
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="刪除帳號">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @endforeach

@@ -44,13 +44,24 @@ class CustomLoginController extends Controller
             session(['sso_info' => $ssoResult['map']]);
 
             // 找到或建立本地 User 紀錄 (解決 1364 Error: 確保填入 account 與 user_type)
+            // 在 login 方法中 updateOrCreate 的部分
             $user = User::updateOrCreate(
-                ['account' => $ssoResult['account']], // 以員編/帳號作為唯一識別
+                ['account' => $ssoResult['account']], 
                 [
                     'name'      => $ssoResult['name'],
                     'email'     => $ssoResult['email'] ?? ($ssoResult['account'] . '@nsysu.edu.tw'),
-                    'user_type' => 'sso', // 標記為 SSO 會員
-                    'password'  => Hash::make(Str::random(24)), // SSO 會員使用隨機密碼
+                    'user_type' => 'sso',
+                    'password'  => Hash::make(Str::random(24)),
+                    // 新增以下對應
+                    'pkind'     => $ssoResult['map']['人員類別 (PKIND)'] ?? null,
+                    'grpno'     => $ssoResult['map']['群組代碼 (GRPNO)'] ?? null,
+                    'unicode1'  => $ssoResult['map']['單位代碼1 (UNICOD1)'] ?? null,
+                    'dpt_desc1' => $ssoResult['map']['單位名稱1 (DPT_DESC1)'] ?? null,
+                    'unicode2'  => $ssoResult['map']['單位代碼2 (UNICOD2)'] ?? null,
+                    'titcod'    => $ssoResult['map']['職稱代碼 (TITCOD)'] ?? null,
+                    'idno'  => $ssoResult['map']['身分證號 (IDNO)'] ?? null,
+                    'title' => $ssoResult['map']['職稱名稱 (TITLE)'] ?? null,
+                    'leave' => $ssoResult['map']['離職註記 (LEAVE)'] ?? null,
                 ]
             );
 

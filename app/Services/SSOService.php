@@ -4,14 +4,12 @@ namespace App\Services;
 
 use SoapClient;
 use Exception;
+use Illuminate\Support\Facades\Log; // 記得引入 Log
 
 class SSOService
 {
     protected $wsdlUrl = "http://sso.nsysu.edu.tw/ssoWebservice/wsso.wsdl";
 
-    /**
-     * 驗證並取得完整的 SSO 使用者資訊映射表
-     */
     public function authenticate($username, $password)
     {
         try {
@@ -27,9 +25,21 @@ class SSOService
             if ($auth) {
                 // 抓取所有欄位
                 $infoStr = $client->getAttr2($username, $password, "ENC", "1;2", "EMPNO;NAME;IDNO;PKIND;GRPNO;UNICOD1;DPT_DESC1;UNICOD2;DPT_DESC2;LEAVE;TITCOD;TITLE;EMAIL;POFTEL");
+
+                // --- 新增這一行：紀錄原始抓取到的字串到 storage/logs/laravel.log ---
+                Log::info("SSO Login Detected - User: {$username} | Raw Data: " . $infoStr);
+
                 $ssoData = explode(";", $infoStr);
 
-                // 完整映射表（保留你原本所有的 Key）
+                // 預先檢查 $ssoData 是否至少有基本的資料（例如長度是否大於 0）
+                if (empty($ssoData) || !isset($ssoData[0])) {
+                    Log::warning("SSO Data Format Error for {$username}: " . $infoStr);
+                    // 至少回傳帳號，其他留空
+                    $ssoData = array_pad($ssoData, 14, ''); 
+                }
+
+
+                // 完整映射表
                 $ssoMap = [
                     '員工編號 (EMPNO)' => $ssoData[0] ?? '',
                     '姓名 (NAME)' => $ssoData[1] ?? '',
@@ -49,14 +59,14 @@ class SSOService
 
                 return [
                     'success' => true,
-                    'account' => $ssoData[0] ?? $username, // 員編作為系統帳號
+                    'account' => $ssoData[0] ?? $username,
                     'name'    => $ssoData[1] ?? $username,
                     'email'   => $ssoData[12] ?? null,
-                    'map'     => $ssoMap // 這裡傳回完整陣列供 Controller 使用
+                    'map'     => $ssoMap 
                 ];
             }
         } catch (Exception $e) {
-            // Log::error("SSO Connection Error: " . $e->getMessage());
+            Log::error("SSO Connection Error: " . $e->getMessage());
         }
 
         return ['success' => false];
