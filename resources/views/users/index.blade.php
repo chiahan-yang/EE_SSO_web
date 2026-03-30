@@ -102,9 +102,15 @@
 
                             <td>
                                 <div class="btn-group">
-                                    <a href="#" class="btn btn-info btn-sm" title="編輯資料">
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm" title="編輯資料">
                                         <i class="fas fa-edit"></i>
                                     </a>
+
+                                    @if($user->user_type === 'local')
+                                        <a href="#" class="btn btn-warning btn-sm" title="修改密碼">
+                                            <i class="fas fa-key"></i>
+                                        </a>
+                                    @endif
 
                                     @if(auth()->user()->account === $user->account)
                                         <button class="btn btn-default btn-sm" disabled title="無法刪除自己">

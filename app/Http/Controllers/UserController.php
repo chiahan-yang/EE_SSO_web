@@ -49,16 +49,66 @@ class UserController extends Controller
     }
 
     // 刪除邏輯
-        public function destroy($id)
+    public function destroy($id)
+    {
+       $user = User::findOrFail($id);
+    // 修正：比對登入者的 account 與要刪除目標的 account
+        if (auth()->user()->account === $user->account) 
         {
+              return redirect('/users')->with('error', '安全防護：您不能刪除目前登入的帳號！');
+        }
+
+         $user->delete();
+        return redirect('/users')->with('success', '帳號「' . $user->name . '」已成功刪除。');
+    }                  
+    
+    public function edit($id)
+    {
+            // 1. 抓取該使用者資料
             $user = User::findOrFail($id);
 
-            // 修正：比對登入者的 account 與要刪除目標的 account
-            if (auth()->user()->account === $user->account) {
-                return redirect('/users')->with('error', '安全防護：您不能刪除目前登入的帳號！');
-            }
+            // 2. 顯示編輯頁面 (resources/views/users/edit.blade.php)
+            return view('users.edit', compact('user'));
+    }
 
-            $user->delete();
-            return redirect('/users')->with('success', '帳號「' . $user->name . '」已成功刪除。');
+
+     public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // 1. 驗證基礎欄位
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email',
+        ];
+
+        // 如果是本地帳號，才允許驗證並修改 account (避免重複)
+        if ($user->user_type === 'local') {
+            $rules['account'] = 'required|string|unique:users,account,' . $id;
         }
+
+        $request->validate($rules);
+
+        // 2. 準備更新資料 (基礎)
+        $updateData = [
+            'name'  => $request->name,
+            'email' => $request->email,
+        ];
+
+        // 3. 如果是本地帳號，則允許更新所有手動欄位
+        if ($user->user_type === 'local') {
+            $updateData['account']   = $request->account;
+            $updateData['idno']      = $request->idno;
+            $updateData['grpno']     = $request->grpno;
+            $updateData['unicode1']  = $request->unicode1;
+            $updateData['dpt_desc1'] = $request->dpt_desc1;
+            $updateData['titcod']    = $request->titcod;
+            $updateData['title']     = $request->title;
+            $updateData['leave']     = $request->leave;
+        }
+
+        $user->update($updateData);
+
+        return redirect('/users')->with('success', '帳號「' . $user->name . '」資料已更新。');
+    }
 }
