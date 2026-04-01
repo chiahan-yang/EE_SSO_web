@@ -111,4 +111,25 @@ class UserController extends Controller
 
         return redirect('/users')->with('success', '帳號「' . $user->name . '」資料已更新。');
     }
+
+    public function updatePassword(Request $request, $id)
+    {
+        // 驗證密碼格式
+        $request->validate([
+            'password' => 'required|string|min:4',
+        ]);
+
+        $user = User::findOrFail($id);
+        
+        // 更新密碼 (使用 Hash 加密)
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password)
+        ]);
+
+        return back()->with('success', '帳號「' . $user->name . '」的密碼已修改成功。');
+    }
+
+
+
+
 }

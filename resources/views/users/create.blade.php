@@ -41,7 +41,14 @@
 
                     <div class="form-group">
                         <label>密碼</label>
-                        <input type="password" name="password" class="form-control" placeholder="請輸入至少 4 位數密碼" required>
+                        <div class="input-group">
+                            <input type="password" name="password" id="create_password" class="form-control" placeholder="請輸入至少 4 位數密碼" required>
+                            <div class="input-group-append" id="toggle_create_password" style="cursor: pointer;">
+                                <div class="input-group-text">
+                                    <span class="fas fa-eye" id="create_eye_icon"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -53,4 +60,23 @@
         </div>
     </div>
 </div>
+@endsection {{-- 這裡結束 content --}}
+
+@section('scripts')
+<script>
+$(document).ready(function() {
+    $('#toggle_create_password').click(function() {
+        const field = $('#create_password');
+        const icon = $('#create_eye_icon');
+        if (field.attr('type') === 'password') {
+            field.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            field.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+});
+</script>
 @endsection
+

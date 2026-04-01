@@ -42,15 +42,15 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | 帳號管理 (CRUD)
-    | 使用 Route::resource 會自動產生以下 7 個路由：
-    | 1. GET    /users              (index)   -> 帳號列表
-    | 2. GET    /users/create       (create)  -> 新增頁面
-    | 3. POST   /users              (store)   -> 儲存新帳號
-    | 4. GET    /users/{user}       (show)    -> 顯示單一帳號 (可不用)
-    | 5. GET    /users/{user}/edit  (edit)    -> 編輯頁面 (解決你剛才的錯誤)
-    | 6. PUT    /users/{user}       (update)  -> 更新儲存
-    | 7. DELETE /users/{user}       (destroy) -> 刪除帳號
+    | 帳號管理自訂動作 (必須放在 resource 之前)
+    |--------------------------------------------------------------------------
+    */
+    // 專門處理修改密碼的路由：對應到 UserController 的 updatePassword 方法
+    Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 帳號管理 (標準 CRUD)
     |--------------------------------------------------------------------------
     */
     Route::resource('users', UserController::class);
